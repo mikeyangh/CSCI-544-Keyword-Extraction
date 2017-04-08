@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+import os.path
+import pickle
+import sys
+
 from .utils import INF
 from .utils import Plane
 from .utils import get_bound
@@ -8,6 +12,65 @@ from .utils import fsplit
 from .utils import bbox2str
 from .utils import matrix2str
 from .utils import apply_matrix_pt
+
+FONT_BLACKLIST = {'E-BX9', 'E-HZ9', 'E-BZ9'}
+
+CHAR_SPACE_MAP_FILE = 'char_space.dat'
+CHAR_ENCODE_FILE = 'cmap.dat'
+
+class CharMap:
+    def __init__(self, filename):
+        self._map = {}
+        with open(filename) as f:
+            for line in f:
+                parts = line.strip('\n').split(' ')
+                if len(parts) != 3:
+                    continue
+                src = unichr(int(parts[2], 16) + 0x7200)
+                dst = unichr(int(parts[1],16))
+                self._map[src] = dst
+                
+    def map(self, obj):
+        # math symbol
+        #print obj._text.encode('utf-8'), obj
+        if ord(obj._text) > 0xe000 or obj.fontname[:5] == 'O9-PK' \
+                or obj.fontname[:5] == 'JLTAY' or (ord(obj._text) > 0x80 and ord(obj._text) < 0x2bff):
+            obj.math = True
+            obj._text = ' '
+            return obj
+        if obj.fontname[:5] != 'E-BX9' and obj.fontname[:5] != 'E-HZ9' \
+                and obj.fontname[:5] != 'E-HX9':
+            return obj
+        if obj._text in self._map:
+            obj.math = True
+            obj._text = self._map[obj._text]
+        return obj
+
+char_map = CharMap(os.path.join(os.path.dirname(__file__), CHAR_ENCODE_FILE))
+
+if os.path.exists(os.path.join(os.path.dirname(__file__),
+    CHAR_SPACE_MAP_FILE)):
+    with open(os.path.join(os.path.dirname(__file__),
+        CHAR_SPACE_MAP_FILE)) as char_space_file:
+        char_space_map = pickle.load(char_space_file)
+else:
+    char_space_map = {}
+    sys.stderr.write('no char space file')
+
+class CharSet:
+    def __init__(self):
+        self.data = {}
+        self.cjks = set()
+    def add(self, char, space):
+        if ord(char) < 0xff:
+            if char not in self.data:
+                self.data[char] = [space]
+            else:
+                self.data[char].append(space)
+        else:
+            self.cjks.add(char)
+
+char_set = CharSet()
 
 
 ##  IndexAssigner
@@ -262,6 +325,14 @@ class LTChar(LTComponent, LTText):
             self.size = self.width
         else:
             self.size = self.height
+        order = ord(text)
+        if order >= 0xff00 and order < 0xff7f:
+            self._text = unichr(order - 0xfee0)
+        if text == u'\ue010': # section separator
+            self._text = u'.'
+        if text == u'\ue011':
+            self._text = u'-'
+        self = char_map.map(self)
         return
 
     def __repr__(self):
@@ -364,25 +435,42 @@ class LTTextLineHorizontal(LTTextLine):
     def __init__(self, word_margin):
         LTTextLine.__init__(self, word_margin)
         self._x1 = +INF
+        self.charwidth = 0
         return
 
     def add(self, obj):
         if isinstance(obj, LTChar) and self.word_margin:
-            margin = self.word_margin * max(obj.width, obj.height)
-            if self._x1 < obj.x0-margin:
-                LTContainer.add(self, LTAnno(' '))
+            self.charwidth = max(self.charwidth, obj.width)
+            if ord(obj._text) >= 0xff and obj.fontname[:5] in FONT_BLACKLIST:
+                #print 'remove char', obj._text.encode('utf-8'), hex(ord(obj._text)), obj.fontname
+                return
+            # margin = self.word_margin * max(obj.width, obj.height)
+            if len(self._objs) > 0:
+                last_obj = self._objs[len(self._objs)-1]
+                char = last_obj._text
+                space = last_obj.x1 - obj.x0
+                char_set.add(char, space)
+
+                cjk = ord(obj._text) > 0xff  or \
+                        ord(last_obj._text) > 0xff
+                space_criteria = char_space_map[last_obj._text] \
+                        if last_obj._text in char_space_map else 2
+                if not cjk and self._x1 - obj.x0 < space_criteria:
+                    LTContainer.add(self, LTAnno(' '))
         self._x1 = obj.x1
         LTTextLine.add(self, obj)
         return
 
     def find_neighbors(self, plane, ratio):
         d = ratio*self.height
+        d_charwidth = 0.1*self.charwidth
         objs = plane.find((self.x0, self.y0-d, self.x1, self.y1+d))
-        return [obj for obj in objs
+        neighbors = [obj for obj in objs
                 if (isinstance(obj, LTTextLineHorizontal) and
                     abs(obj.height-self.height) < d and
                     (abs(obj.x0-self.x0) < d or
                      abs(obj.x1-self.x1) < d))]
+        return neighbors
 
 
 class LTTextLineVertical(LTTextLine):
@@ -566,6 +654,21 @@ class LTLayoutContainer(LTContainer):
 
     # group_textlines: group neighboring lines to textboxes.
     def group_textlines(self, laparams, lines):
+        #for line in lines:
+            #print line, line.charwidth, line._objs[len(line._objs)-1].fontname
+            #print line.get_text().encode('utf-8')
+        def line_filter(line):
+            if line.bbox[3] > 703.5:
+                return False
+            width = line.bbox[0] + line.bbox[2]
+            if width <= 540 and width >= 490:
+                return True
+            if line.bbox[0] < 40 or (line.bbox[0] > 250 and line.bbox[0] < 290):
+                return True
+            if line.get_text() == u'\u53c2\u8003\u6587\u732e': # Reference header
+                return True
+            return False
+        lines = [line for line in lines if line_filter(line)]
         plane = Plane(self.bbox)
         plane.extend(lines)
         boxes = {}
@@ -677,11 +780,19 @@ class LTLayoutContainer(LTContainer):
             obj.analyze(laparams)
         textboxes = list(self.group_textlines(laparams, textlines))
         if -1 <= laparams.boxes_flow and laparams.boxes_flow <= +1 and textboxes:
-            self.groups = self.group_textboxes(laparams, textboxes)
+            left_boxes = list(filter(lambda box: box.bbox[0] < self.bbox[2]/2, textboxes))
+            right_boxes = list(filter(lambda box: box.bbox[0] > self.bbox[2]/2, textboxes))
             assigner = IndexAssigner()
-            for group in self.groups:
-                group.analyze(laparams)
-                assigner.run(group)
+            if len(left_boxes) > 0:
+                self.groups = self.group_textboxes(laparams, left_boxes)
+                for group in self.groups:
+                    group.analyze(laparams)
+                    assigner.run(group)
+            if len(right_boxes) > 0:
+                self.groups = self.group_textboxes(laparams, right_boxes)
+                for group in self.groups:
+                    group.analyze(laparams)
+                    assigner.run(group)
             textboxes.sort(key=lambda box: box.index)
         else:
             def getkey(box):

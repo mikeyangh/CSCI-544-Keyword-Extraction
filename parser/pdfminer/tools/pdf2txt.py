@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import pickle
 from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
@@ -7,7 +8,7 @@ from pdfminer.pdfdevice import PDFDevice, TagExtractor
 from pdfminer.pdfpage import PDFPage
 from pdfminer.converter import XMLConverter, HTMLConverter, TextConverter
 from pdfminer.cmapdb import CMapDB
-from pdfminer.layout import LAParams
+from pdfminer.layout import LAParams, char_set
 from pdfminer.image import ImageWriter
 
 # main
@@ -109,6 +110,21 @@ def main(argv):
             page.rotate = (page.rotate+rotation) % 360
             interpreter.process_page(page)
         fp.close()
+    #char_space_map = {}
+    #for char in char_set.data:
+        #char_set.data[char].sort()
+        #char_space_map[char] = char_set.data[char][int(len(char_set.data[char])*0.4)]
+        #char_space_map['o'] = char_set.data['o'][int(len(char_set.data['o'])*0.1)]
+        #char_space_map['i'] = char_set.data['i'][int(len(char_set.data['i'])*0.05)]
+        #char_space_map['e'] = char_set.data['e'][int(len(char_set.data['e'])*0.3)]
+        #char_space_map['s'] = char_set.data['s'][int(len(char_set.data['s'])*0.3)]
+        #with open(CHAR_SPACE_MAP_PATH, 'w') as char_space_file:
+            #pickle.dump(char_space_map, char_space_file)
+    #cjks = list(char_set.cjks)
+    #cjks.sort(key=lambda x: ord(x))
+    #for char in cjks:
+        #print char.encode('utf8'), hex(ord(char))
+
     device.close()
     outfp.close()
     return

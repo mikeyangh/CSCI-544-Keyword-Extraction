@@ -156,7 +156,7 @@ class PDFConverter(PDFLayoutAnalyzer):
 class TextConverter(PDFConverter):
 
     def __init__(self, rsrcmgr, outfp, codec='utf-8', pageno=1, laparams=None,
-                 showpageno=False, imagewriter=None):
+                 showpageno=True, imagewriter=None):
         PDFConverter.__init__(self, rsrcmgr, outfp, codec=codec, pageno=pageno, laparams=laparams)
         self.showpageno = showpageno
         self.imagewriter = imagewriter
