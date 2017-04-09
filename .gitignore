@@ -1,5 +1,5 @@
 scrapy/tutorial/pdf
 scrapy/tutorial/tor
 scrapy/xuebao/pdf
-data/segmented
-data/trimmed
+data/segmented/*.txt
+data/trimmed/*.txt
