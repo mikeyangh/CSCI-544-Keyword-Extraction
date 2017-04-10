@@ -1,3 +1,4 @@
+import math
 import os
 import os.path
 import pickle
@@ -7,7 +8,7 @@ DATA_DIR = '../../data/'
 SEG_DIR = os.path.join(DATA_DIR, 'segmented')
 files = os.listdir(SEG_DIR)
 
-TMP_PATH = '/tmp/idf.pkl'
+TMP_PATH = '/tmp/idf.txt'
 
 def filt(word):
     for i in range(len(word)):
@@ -19,6 +20,7 @@ class IDF:
     def __init__(self):
         self.N = 0
         self.data = {}
+        self.idf = {}
 
     def put(self, ar):
         self.N += 1
@@ -28,16 +30,24 @@ class IDF:
             else:
                 self.data[word] = 1
 
+    def run(self):
+        for word in self.data:
+            self.idf[word] = math.log(1.*self.N/(1+self.data[word]))
+
+
     def save(self):
-        with open('/tmp/idf.pkl', 'wb') as f:
-            pickle.dump((self.N, self.data), f)
+        with open(TMP_PATH, 'w') as f:
+            for word in self.data:
+                f.write('{} {}\n'.format(word, self.idf[word]))
 
     def load(self):
-        with open('/tmp/idf.pkl', 'rb') as f:
-            self.N, self.data = pickle.load(f)
+        with open(TMP_PATH) as f:
+            for line in f:
+                parts = line.strip().split(' ')
+                self.idf[parts[0]] = float(parts[1])
 
 idf = IDF()
-if os.path.exists('/tmp/idf.pkl'):
+if os.path.exists(TMP_PATH):
     idf.load()
 else:
     count = 0
@@ -49,4 +59,5 @@ else:
             idf.put(words)
             count += 1
             print(count)
+    idf.run()
     idf.save()

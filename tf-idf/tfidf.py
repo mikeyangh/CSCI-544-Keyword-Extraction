@@ -20,11 +20,11 @@ with open(args.file) as f:
         else:
             tf[word] = 1
     for word in tf:
-        idf_value = math.log(1.*idf.idf.N/(1+idf.idf.data[word]))
-        word_score_pairs.append((word,tf[word] * idf_value, tf[word], idf_value, idf.idf.data[word]))
+        idf_value = idf.idf.idf[word]
+        word_score_pairs.append((word,tf[word] * idf_value, tf[word], idf_value))
 
 word_score_pairs.sort(key=lambda x: x[1], reverse=True)
 
-for word, score, tf_value, idf_value, c in word_score_pairs:
-    print('"'+word+'"', score, tf_value, idf_value, c)
+for word, score, tf_value, idf_value in word_score_pairs:
+    print('"'+word+'"', score, tf_value, idf_value)
 
