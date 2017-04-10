@@ -1,3 +1,9 @@
+*.pyc
+*.swp
+
 scrapy/tutorial/pdf
 scrapy/tutorial/tor
 scrapy/xuebao/pdf
+
+parser/pdfminer/build
+parser/pdfminer/pdfminer/cmap

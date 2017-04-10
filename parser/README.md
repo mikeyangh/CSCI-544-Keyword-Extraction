@@ -1,5 +1,19 @@
-# CSCI-544-Keyword-Extraction
-Group project for CSCI-544, 2017 Spring
+# Parser
+Utilize https://github.com/euske/pdfminer to convert PDFs into txts.
+
+Standard version of this package cannot deal with double columns and various encoding problems,
+`pdfminer` directory is a fork from this package with our customization.
+
+## Install
+Highly recommend to install in virtualenv
+    $cd pdfminer
+    $make cmap
+    $python setup install
+
+## Usage
+Run `parse_xuebao.py`, source directory of PDFs and destination directory must be specified.
+
+# Excited
 ```
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
