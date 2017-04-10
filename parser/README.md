@@ -6,6 +6,7 @@ Standard version of this package cannot deal with double columns and various enc
 
 ## Install
 Highly recommend to install in virtualenv
+
     $cd pdfminer
     $make cmap
     $python setup install
