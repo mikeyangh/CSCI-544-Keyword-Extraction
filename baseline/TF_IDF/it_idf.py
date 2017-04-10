@@ -2,10 +2,18 @@ import os
 import sys
 import codecs
 import operator
+import re
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
 input_path = sys.argv[1]
 idf_path = './idf.txt'
+
+def invalid(word):
+	if word.replace('.','',1).isdigit() or len(word.decode('utf-8')) < 2:
+		return True
+	if re.match(r'^Page.', word):
+		return True
+	return False
 
 class KeywordExtractor(object):
 	def __init__(self):
@@ -24,7 +32,7 @@ class KeywordExtractor(object):
 		segmented = fin.split('/ ')
 		word_count = {}
 		for word in segmented:
-			if word.replace('.','',1).isdigit() or len(word) < 2:
+			if invalid(word):
 				continue
 			if word not in word_count:
 				word_count[word] = 0
@@ -41,7 +49,7 @@ class KeywordExtractor(object):
 		return rtn
 
 ke = KeywordExtractor()
-rtn = ke.get_keywords(input_path, 20)
+rtn = ke.get_keywords(input_path, 30)
 for word in rtn:
 	print word
 
