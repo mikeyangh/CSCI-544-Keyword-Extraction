@@ -9,7 +9,7 @@ input_path = sys.argv[1]
 idf_path = './idf.txt'
 
 def invalid(word):
-	if word.replace('.','',1).isdigit() or len(word.decode('utf-8')) < 2:
+	if word.replace('.','',1).isdigit() or len(word.decode('utf-8')) < 2 or len(word.decode('utf-8')) > 5:
 		return True
 	if re.match(r'^Page.', word):
 		return True

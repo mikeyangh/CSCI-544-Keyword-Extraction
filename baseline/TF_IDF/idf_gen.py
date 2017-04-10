@@ -27,8 +27,8 @@ for k, v in idf.iteritems():
 	try:
 		if len(k) > 100:
 			continue
-		# fout.write('{0} {1}\n'.format(k, str(math.log(total_num / v))))
-		fout.write('{0} {1}\n'.format(k, v))
+		fout.write('{0} {1}\n'.format(k, str(math.log(total_num / v))))
+		# fout.write('{0} {1}\n'.format(k, v))
 	except:
 		except_count += 1
 		continue
