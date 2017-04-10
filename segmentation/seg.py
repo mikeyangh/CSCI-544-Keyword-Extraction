@@ -3,6 +3,8 @@ import os
 import jieba as jb
 import sys
 
+import time
+
 blank_chars = '　'
 blank_chars_replacement = ' '
 
@@ -24,6 +26,8 @@ def trim_files(raw_file_dir):
 
 
 def seg_trimmed_files(raw_file_dir):
+    jb.load_userdict('/Users/dengyuchi/Development/CSCI-544-Keyword-Extraction/segmentation/dicts/dicts-txt/cs.txt.sorted.txt')
+    jb.load_userdict('/Users/dengyuchi/Development/CSCI-544-Keyword-Extraction/segmentation/dicts/dicts-txt/math.txt.sorted.txt')
     for filename in os.listdir(raw_file_dir):
         if filename.endswith('.txt'):
             with open(raw_file_dir + '/' + '/trimmed/' + filename, 'r') as txt_file:
@@ -37,7 +41,9 @@ def seg_trimmed_files(raw_file_dir):
 
 
 if __name__ == '__main__':
+    start_time = time.time()
     if len(sys.argv) == 2:
         raw_file_dir = sys.argv[1]
         trim_files(raw_file_dir)
         seg_trimmed_files(raw_file_dir)
+    print("\nRunning time: {0}ms\n".format(int((time.time() - start_time) * 1000)))
