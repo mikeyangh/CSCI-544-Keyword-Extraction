@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import codecs
@@ -39,17 +40,17 @@ class KeywordExtractor(object):
 			word_count[word] += 1
 		for word in word_count:
 			count_idf = 0.
-			if word in self.idf:
-				count_idf = self.idf[word]
-			word_count[word] += count_idf
+			if word.decode('utf-8') in self.idf:
+				count_idf = self.idf[word.decode('utf-8')]
+			word_count[word] *= count_idf
 		sorted_keywords = sorted(word_count.items(), key=operator.itemgetter(1), reverse=True)
 		rtn = []
-		for word, _ in sorted_keywords[:topK]:
+		for word in sorted_keywords[:topK]:
 			rtn.append(word)
 		return rtn
 
 ke = KeywordExtractor()
-rtn = ke.get_keywords(input_path, 30)
+rtn = ke.get_keywords(input_path, 50)
 for word in rtn:
-	print word
+	print '{0} {1}'.format(word[0], word[1])
 
