@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 import os
 import os.path
 
 import jieba as jb
+import jieba.posseg as pseg
 import sys
 
 import time
@@ -47,13 +49,24 @@ def seg_trimmed_files(raw_file_dir):
         if filename.endswith('.txt'):
             with open(raw_file_dir + '/' + '/trimmed/' + filename, 'r') as txt_file:
                 with open(raw_file_dir + '/segmented/' + filename, 'w') as output_file:
-                    print('Segmenting file ' + filename)
-                    whole_text = txt_file.readline()
-                    seg_list = jb.cut(whole_text, cut_all=False)
-                    output_file.write("/ ".join(seg_list) + "\n")
-                    output_file.write(txt_file.readline())
-                    output_file.close()
-                    txt_file.close()
+                    with open(raw_file_dir + '/segmented/tag_' + filename, 'w') as tag_file:
+                        print('Segmenting file ' + filename)
+                        whole_text = txt_file.readline()
+                        # seg_list = jb.cut(whole_text, cut_all=False)
+                        pair_list = pseg.cut(whole_text)
+                        word_list = []
+                        tag_list = []
+                        for pair in pair_list:
+                            word_list.append(pair.word)
+                            tag_list.append(pair.flag)
+                        # word_list = [pair.word for pair in pair_list]
+                        # tag_list = [pair.flag for pair in pair_list]
+                        output_file.write("/ ".join(word_list) + "\n")
+                        output_file.write(txt_file.readline())
+                        output_file.close()
+                        tag_file.write('/'.join(tag_list) + '\n')
+                        tag_file.close()
+                        txt_file.close()
 
 
 if __name__ == '__main__':
