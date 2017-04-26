@@ -1,0 +1,7 @@
+音韵标注
+拉班舞谱
+语义信息
+易混词集
+HMM
+SOFM/HMM
+Effort

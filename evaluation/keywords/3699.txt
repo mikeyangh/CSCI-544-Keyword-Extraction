@@ -1,0 +1,4 @@
+BitTorrent
+激励机制
+自适应激励
+Nash平衡

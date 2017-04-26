@@ -1,0 +1,8 @@
+MD5
+Hash函数
+差分攻击
+隧道技术
+多消息修正方法
+CUDA
+GPGPU
+MersenneTwister

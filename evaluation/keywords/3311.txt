@@ -1,0 +1,5 @@
+分布式计算环境
+信任测度
+Dempster-Shafer证据理论
+Shapley熵
+动态可信度评估模型

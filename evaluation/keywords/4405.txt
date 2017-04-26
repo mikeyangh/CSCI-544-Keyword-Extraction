@@ -1,0 +1,5 @@
+RDF
+RDFS推理
+MapReduce
+语义推理
+分布式推理

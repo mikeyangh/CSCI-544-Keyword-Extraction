@@ -1,0 +1,7 @@
+社区型问答
+问句检索
+主题模型
+翻译模型
+LDA(LatentDirichletAllocation)
+社会计算
+社交网络
