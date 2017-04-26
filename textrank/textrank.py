@@ -29,15 +29,15 @@ def parse_commands():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--d', action='store', dest='d', default=0.85, type=float,
-                        help='Store value d for textrank')
+                        help='Store value d for textrank. Default value: 0.85')
     parser.add_argument('-t', '--time', action='store', dest='iterate_time', default=200, type=int,
-                        help='Store iteration time for textrank')
+                        help='Store iteration time for textrank. Default value: 200')
     parser.add_argument('-w', '--window', action='store', dest='window', default=2, type=int,
-                        help='Store cooccurrence window size for textrank')
+                        help='Store cooccurrence window size for textrank. Default value: 2')
     parser.add_argument('-k', '--keynum', action='store', dest='key_num', default=20, type=int,
-                        help='Store the number of generated keywords')
+                        help='Store the number of generated keywords. Default value: 20')
     parser.add_argument('-o', '--output', action='store', dest='output_file', default='./result.txt', type=str,
-                        help='Store output file name')
+                        help='Store output file name. Default value: result.txt')
 
     required_group = parser.add_argument_group('required arguments')
     required_group.add_argument('-a', '--words', dest='words_file',
