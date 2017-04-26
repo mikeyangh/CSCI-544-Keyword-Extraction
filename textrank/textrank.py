@@ -256,7 +256,8 @@ def main():
 
     fh = open(output_file, 'w')
     for (word, score) in keyphrase_list:
-        fh.write(word + ' ' + str(score) + '\n')
+        # fh.write(word + ' ' + str(score) + '\n')
+        fh.write(word + '\n')
     fh.close()
 
 
