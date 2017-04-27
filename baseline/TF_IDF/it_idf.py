@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
+#coding=utf-8
 import os
 import sys
 import codecs
 import operator
 import re
 reload(sys)
-sys.setdefaultencoding( "utf-8" )
 input_path = sys.argv[1]
 idf_path = './idf.txt'
 
@@ -23,7 +22,7 @@ class KeywordExtractor(object):
 		print 'init idf data'
 		for index, line in enumerate(idf_file.readlines()):
 			try:
-				tmp_list = line.split(u' ')
+				tmp_list = line.split(' ')
 				self.idf[tmp_list[0]] = float(tmp_list[1])
 			except:
 				continue
@@ -40,8 +39,8 @@ class KeywordExtractor(object):
 			word_count[word] += 1
 		for word in word_count:
 			count_idf = 0.
-			if word.decode('utf-8') in self.idf:
-				count_idf = self.idf[word.decode('utf-8')]
+			if word in self.idf:
+				count_idf = self.idf[word]
 			word_count[word] *= count_idf
 		sorted_keywords = sorted(word_count.items(), key=operator.itemgetter(1), reverse=True)
 		rtn = []
