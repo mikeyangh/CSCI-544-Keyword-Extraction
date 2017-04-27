@@ -1,0 +1,6 @@
+云计算
+MapReduce
+大同步模型
+消息传递
+图算法
+PageRank

@@ -1,0 +1,5 @@
+MPSoC
+NoC
+协议功耗
+目录协议
+Cache一致性

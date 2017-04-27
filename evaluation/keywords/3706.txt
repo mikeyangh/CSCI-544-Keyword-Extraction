@@ -1,0 +1,5 @@
+Bent函数
+二阶非线性度
+双线性函数
+Walsh谱
+Reed-Muller码
