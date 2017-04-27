@@ -25,7 +25,7 @@ def parse_commands():
     parser.add_argument('-o', '--output', action='store', dest='output_file', default='./result.txt', type=str,
                         help='Store output file name. Default value: result.txt')
     parser.add_argument('-k', '--keynum', action='store', dest='key_num', default=10, type=int,
-                        help='Store output file name. Default value: result.txt')
+                        help='Store the number of generated keywords. Default value: 10')
 
     required_group = parser.add_argument_group('required arguments')
     required_group.add_argument('-i', '--input', dest='input_file',
@@ -44,7 +44,7 @@ def main():
 
     parse_commands()
     load_stopwords()
-    load_words('/Coding/544/project/txt2/segmented/3000.txt')
+    load_words(input_file)
     generate_phrase()
     calculate_score()
 
