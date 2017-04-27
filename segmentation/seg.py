@@ -13,7 +13,7 @@ blank_chars_replacement = ' '
 
 SEGMENTATION_DIR = os.path.dirname(__file__)
 
-USE_CUSTOM_DICT = False
+USE_CUSTOM_DICT = True
 
 
 def trim_files(raw_file_dir, dst_dir):
@@ -45,6 +45,8 @@ def trim_files(raw_file_dir, dst_dir):
 def seg_trimmed_files(raw_file_dir, dst_dir):
     if not os.path.exists(os.path.join(dst_dir, 'segmented')):
         os.mkdir(os.path.join(dst_dir, 'segmented'))
+    if not os.path.exists(os.path.join(dst_dir, 'tags')):
+        os.mkdir(os.path.join(dst_dir, 'tags'))
     if USE_CUSTOM_DICT:
         jb.load_userdict(os.path.join(SEGMENTATION_DIR, 'dicts/dicts-txt/cs.txt.sorted.txt'))
         jb.load_userdict(os.path.join(SEGMENTATION_DIR, 'dicts/dicts-txt/math.txt.sorted.txt'))
@@ -52,7 +54,7 @@ def seg_trimmed_files(raw_file_dir, dst_dir):
         if filename.endswith('.txt'):
             with open(dst_dir + '/' + '/trimmed/' + filename, 'r') as txt_file:
                 with open(dst_dir + '/segmented/' + filename, 'w') as output_file:
-                    with open(dst_dir + '/segmented/tag_' + filename, 'w') as tag_file:
+                    with open(dst_dir + '/tags/tag_' + filename, 'w') as tag_file:
                         print('Segmenting file ' + filename)
                         whole_text = txt_file.readline()
                         # seg_list = jb.cut(whole_text, cut_all=False)
@@ -77,8 +79,10 @@ if __name__ == '__main__':
     if len(sys.argv) == 3:
         raw_file_dir = sys.argv[1]
         dst_dir = sys.argv[2]
-        trim_files(raw_file_dir, dst_dir)
+        #trim_files(raw_file_dir, dst_dir)
         seg_trimmed_files(raw_file_dir, dst_dir)
+        if not os.path.exists(dst_dir):
+            os.mkdir(dst_dir)
     else:
         print('seg.py src dst')
     print("\nRunning time: {0}ms\n".format(int((time.time() - start_time) * 1000)))

@@ -1,9 +1,10 @@
 import math
+import operator
 import os
 import os.path
 import pickle
 
-DATA_DIR = '../../data/'
+DATA_DIR = '../../data/txt3_raw_seg'
 
 SEG_DIR = os.path.join(DATA_DIR, 'segmented')
 files = os.listdir(SEG_DIR)
@@ -37,8 +38,12 @@ class IDF:
 
     def save(self):
         with open(TMP_PATH, 'w') as f:
+            data = []
             for word in self.data:
-                f.write('{} {}\n'.format(word, self.idf[word]))
+                data.append((word, self.idf[word]))
+            data.sort(key=operator.itemgetter(1))
+            for word, idf, in data:
+                f.write('{} {}\n'.format(word, idf))
 
     def load(self):
         with open(TMP_PATH) as f:
