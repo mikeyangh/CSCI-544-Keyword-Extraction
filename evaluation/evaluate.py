@@ -52,7 +52,11 @@ def calculate_score():
 
     precision = match_num/float(extracted_word_num)
     recall = match_num/float(ref_word_num)
+    print precision
+    print recall
 
+    if precision + recall == 0:
+        return 0
     return 2 * precision * recall / (precision + recall)
 
 

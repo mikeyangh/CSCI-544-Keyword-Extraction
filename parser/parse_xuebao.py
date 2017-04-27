@@ -16,7 +16,7 @@ parser.add_argument('-l', '--limit', help='Number of files to convert', type=int
 args = parser.parse_args()
 
 
-files = os.listdir(PDF_DIR)
+files = os.listdir(args.pdf)
 
 files = list(filter(lambda name: name[-4:] == '.pdf', files))
 
@@ -58,3 +58,9 @@ if args.limit == 0:
     process_all(args.n)
 else:
     process_all(args.n, args.limit)
+
+# Clean small files less than 10kb
+for fname in os.listdir(args.txt):
+    fpath = os.path.join(args.txt, fname)
+    if os.stat(fpath).st_size < 10240:
+        os.rename(fpath, fpath + '.rm')
