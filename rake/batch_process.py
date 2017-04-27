@@ -10,7 +10,6 @@ TXT_DIR = os.path.join(DATA_DIR, 'txts')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--txt', help='Directory of TXTs.', required=True)
-parser.add_argument('-b', '--tag', help='Directory of Tags.', required=True)
 parser.add_argument('-n', '--n', help='Number of subprocess', type=int, default=4)
 parser.add_argument('-o', '--out', help='Directory of outputs', required=True)
 args = parser.parse_args()
@@ -24,11 +23,9 @@ N = len(files)
 
 def process_one(fname):
     txtname = fname[:-4] + '.txt'
-    tagname = fname[:-4] + '.txt'
     outname = fname[:-4] + '.txt'
-    p2 = Popen(['python2', 'textrank.py',
-        '-a', os.path.join(args.txt, txtname),
-        '-b',  os.path.join(args.tag, tagname),
+    p2 = Popen(['python', 'rake.py',
+        '-i', os.path.join(args.txt, txtname),
         '-o',  os.path.join(args.out, outname),
         ])
     return (p2, fname)
