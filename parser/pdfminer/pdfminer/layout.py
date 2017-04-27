@@ -326,8 +326,13 @@ class LTChar(LTComponent, LTText):
         else:
             self.size = self.height
         order = ord(text)
+        #print text.encode('utf-8'), hex(order), font
         if order >= 0xff00 and order < 0xff7f:
             self._text = unichr(order - 0xfee0)
+        if text == u'\x15': # space
+            self._text = u' '
+        if text == u'\x1c': # space
+            self._text = u';'
         if text == u'\ue010': # section separator
             self._text = u'.'
         if text == u'\ue011':
