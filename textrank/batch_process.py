@@ -26,7 +26,7 @@ def process_one(fname):
     txtname = fname[:-4] + '.txt'
     tagname = fname[:-4] + '.txt'
     outname = fname[:-4] + '.txt'
-    p2 = Popen(['python', 'textrank.py',
+    p2 = Popen(['python2', 'textrank.py',
         '-a', os.path.join(args.txt, txtname),
         '-b',  os.path.join(args.tag, tagname),
         '-o',  os.path.join(args.out, outname),

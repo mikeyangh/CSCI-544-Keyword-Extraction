@@ -13,7 +13,7 @@ blank_chars_replacement = ' '
 
 SEGMENTATION_DIR = os.path.dirname(__file__)
 
-USE_CUSTOM_DICT = False
+USE_CUSTOM_DICT = True
 
 
 def trim_files(raw_file_dir, dst_dir):
@@ -77,8 +77,10 @@ if __name__ == '__main__':
     if len(sys.argv) == 3:
         raw_file_dir = sys.argv[1]
         dst_dir = sys.argv[2]
-        trim_files(raw_file_dir, dst_dir)
+        #trim_files(raw_file_dir, dst_dir)
         seg_trimmed_files(raw_file_dir, dst_dir)
+        if not os.path.exists(dst_dir):
+            os.mkdir(dst_dir)
     else:
         print('seg.py src dst')
     print("\nRunning time: {0}ms\n".format(int((time.time() - start_time) * 1000)))
