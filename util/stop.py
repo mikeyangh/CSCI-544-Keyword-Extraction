@@ -19,16 +19,10 @@ required_group.add_argument('-i', '--input', action='store', dest='input_dir',
 
 results = parser.parse_args()
 
-START_ID = 3000
-END_ID = 4792
-
 invert_idx_dict = {}
 stop_list = []
 
 count_paper = 0
-
-paper_id = START_ID
-
 
 for filename in os.listdir(results.input_dir):
     if not filename.endswith('.txt'):
