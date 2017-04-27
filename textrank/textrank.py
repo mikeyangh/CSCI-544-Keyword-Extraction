@@ -2,7 +2,7 @@ import argparse
 
 ITERATION_TIME = 200
 WINDOW_SIZE = 2
-KEY_PHRASE_NUM = 20
+KEY_PHRASE_NUM = 10
 d = 0.85
 
 
@@ -34,8 +34,8 @@ def parse_commands():
                         help='Store iteration time for textrank. Default value: 200')
     parser.add_argument('-w', '--window', action='store', dest='window', default=2, type=int,
                         help='Store cooccurrence window size for textrank. Default value: 2')
-    parser.add_argument('-k', '--keynum', action='store', dest='key_num', default=20, type=int,
-                        help='Store the number of generated keywords. Default value: 20')
+    parser.add_argument('-k', '--keynum', action='store', dest='key_num', default=10, type=int,
+                        help='Store the number of generated keywords. Default value: 10')
     parser.add_argument('-o', '--output', action='store', dest='output_file', default='./result.txt', type=str,
                         help='Store output file name. Default value: result.txt')
 
@@ -84,12 +84,12 @@ def load_tags(filename):
 
 def load_stopwords():
 
-    fh = open('stop.txt', 'r')
+    fh = open('../util/stop.txt', 'r')
     for line in fh:
         stop_set.add(line.strip())
     fh.close()
 
-    fh = open('paper_stop.txt', 'r')
+    fh = open('../util/paper_stop.txt', 'r')
     for line in fh:
         stop_set.add(line.strip())
     fh.close()

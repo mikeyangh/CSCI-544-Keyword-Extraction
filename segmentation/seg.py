@@ -34,7 +34,7 @@ def trim_files(raw_file_dir, dst_dir):
                     line_list = [line.strip() for line in line_list if line != keywords_line]
                     whole_text = str(''.join(line_list))
                     whole_text = whole_text.translate(str.maketrans(blank_chars, blank_chars_replacement))
-                    whole_text = whole_text.replace(' ', '')
+                    whole_text = whole_text.replace(' ', ',')
                     output_file.write(whole_text + "\n")
                     if keywords_line:
                         output_file.write(keywords_line)
@@ -45,6 +45,8 @@ def trim_files(raw_file_dir, dst_dir):
 def seg_trimmed_files(raw_file_dir, dst_dir):
     if not os.path.exists(os.path.join(dst_dir, 'segmented')):
         os.mkdir(os.path.join(dst_dir, 'segmented'))
+    if not os.path.exists(os.path.join(dst_dir, 'tags')):
+        os.mkdir(os.path.join(dst_dir, 'tags'))
     if USE_CUSTOM_DICT:
         jb.load_userdict(os.path.join(SEGMENTATION_DIR, 'dicts/dicts-txt/cs.txt.sorted.txt'))
         jb.load_userdict(os.path.join(SEGMENTATION_DIR, 'dicts/dicts-txt/math.txt.sorted.txt'))
@@ -52,18 +54,16 @@ def seg_trimmed_files(raw_file_dir, dst_dir):
         if filename.endswith('.txt'):
             with open(dst_dir + '/' + '/trimmed/' + filename, 'r') as txt_file:
                 with open(dst_dir + '/segmented/' + filename, 'w') as output_file:
-                    with open(dst_dir + '/segmented/tag_' + filename, 'w') as tag_file:
+                    with open(dst_dir + '/tags/' + filename, 'w') as tag_file:
                         print('Segmenting file ' + filename)
                         whole_text = txt_file.readline()
-                        # seg_list = jb.cut(whole_text, cut_all=False)
                         pair_list = pseg.cut(whole_text)
                         word_list = []
                         tag_list = []
                         for pair in pair_list:
                             word_list.append(pair.word)
                             tag_list.append(pair.flag)
-                        # word_list = [pair.word for pair in pair_list]
-                        # tag_list = [pair.flag for pair in pair_list]
+
                         output_file.write("/ ".join(word_list) + "\n")
                         output_file.write(txt_file.readline())
                         output_file.close()
