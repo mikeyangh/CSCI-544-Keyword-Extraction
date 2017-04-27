@@ -24,7 +24,7 @@ N = len(files)
 
 def process_one(fname):
     txtname = fname[:-4] + '.txt'
-    tagname = 'tag_' + fname[:-4] + '.txt'
+    tagname = fname[:-4] + '.txt'
     outname = fname[:-4] + '.txt'
     p2 = Popen(['python', 'textrank.py',
         '-a', os.path.join(args.txt, txtname),
