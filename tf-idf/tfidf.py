@@ -22,6 +22,7 @@ if __name__ == '__main__':
 parser = argparse.ArgumentParser()
 parser.add_argument('file')
 parser.add_argument('-t', '--type')
+parser.add_argument('--vanilla', action='store_true')
 parser.add_argument('-n', '--num', type=int, default=15)
 parser.add_argument('-d', '--deduplicate', action='store_true')
 args = parser.parse_args()
@@ -55,24 +56,20 @@ def tf_smooth(x):
     return x - x**3 / 8000
 
 def absolute_frequency():
+    word_score_pairs = []
     with open(args.file) as f, open(trimmed_file) as tf:
         whole_text = tf.readline()
         tf = Counter()
         words=[s.strip() for s in f.readline().split('/') if idf.filt(s)]
         n = len(words)
         for word in words:
-            tf[(word,)] = whole_text.count(word)
-        for phrase in zip(words[0:(n-2)], words[1:]):
-            tf[phrase] = whole_text.count(''.join(phrase))
+            tf[word] = whole_text.count(word)
     
-        for phrase in tf:
-            idf_value = sum([idf.idf.idf[word] for word in phrase])
-            prod = np.product([idf.idf.idf[word] for word in phrase])
-            
-            if len(phrase) > 1:
-                idf_value += prod
-            word_score_pairs.append((phrase,tf_smooth(tf[phrase]) * cap(idf_value, 20), tf[phrase], idf_value))
+        for word in tf:
+            idf_value = idf.idf.idf[word]
+            word_score_pairs.append((word, tf[word] * idf_value, tf[word], idf_value))
     word_score_pairs.sort(key=lambda x: x[1], reverse=True)
+    return word_score_pairs
 
 def partial_frequency():
     word_score_pairs = []
@@ -154,7 +151,10 @@ def list_top(word_score_pairs):
         print(word)
 
 if __name__ == '__main__':
-    word_score_pairs = partial_frequency()
+    if args.vanilla:
+        word_score_pairs = absolute_frequency()
+    else:
+        word_score_pairs = partial_frequency()
     if args.type and args.type == 'all':
         list_all(word_score_pairs)
     else:
