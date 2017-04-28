@@ -32,10 +32,7 @@ def parse_output(out):
     f1s.append(f1)
 
 def process_one(fname):
-    p2 = Popen(['python2', 'evaluate.py',
-        os.path.join(args.ref, fname),
-        os.path.join(args.extracted, fname),
-        ], stdout=PIPE)
+    p2 = Popen(['python', 'evaluate.py', os.path.join(args.ref, fname), os.path.join(args.extracted, fname)], stdout=PIPE)
     return (p2, fname)
 
 
