@@ -15,6 +15,7 @@ words = []
 tags = []
 
 stop_set = set()
+filter_set = set()
 valid_tag_set = {'n', 'v', 'a', 'eng', 'x'}
 
 text_graph_dict = {}
@@ -96,6 +97,13 @@ def load_stopwords():
     fh = open('../util/paper_stop.txt', 'r')
     for line in fh:
         stop_set.add(line.strip())
+    fh.close()
+
+
+def load_filter():
+    fh = open('../util/filter.txt', 'r')
+    for line in fh:
+        filter_set.add(line.strip())
     fh.close()
 
 
@@ -235,10 +243,28 @@ def combine_keyword():
     for keyphrase in keyphrase_score_dict:
         keyphrase_score_dict[keyphrase] *= phrase_count_dict[keyphrase]
 
-    tmp_list = [(phrase, _score) for phrase, _score in keyphrase_score_dict.items()]
+    tmp_list = [(phrase, _score) for phrase, _score in keyphrase_score_dict.items() if phrase not in filter_set]
     tmp_list.sort(key=lambda x: -x[1])
+    tmp_list = deduplicate(tmp_list)
     global keyphrase_list
     keyphrase_list = tmp_list[:min(len(tmp_list), KEY_PHRASE_NUM)]
+
+
+def deduplicate(tmp_list):
+    res_list = []
+    for i in range(len(tmp_list)):
+        if i == 0:
+            res_list.append(tmp_list[0])
+            continue
+        covered = False
+        for j in range(i):
+            if tmp_list[i][0].find(tmp_list[j][0]) >= 0 or tmp_list[j][0].find(tmp_list[i][0]) >= 0:
+                covered = True
+                break
+        if not covered:
+            res_list.append(tmp_list[i])
+
+    return res_list
 
 
 def main():
@@ -248,6 +274,7 @@ def main():
     load_tags(filename=tags_file)
     assert len(words) == len(tags)
     load_stopwords()
+    load_filter()
 
     generate_graph()
 
