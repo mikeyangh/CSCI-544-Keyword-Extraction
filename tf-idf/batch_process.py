@@ -28,7 +28,8 @@ def process_one(fname):
     tagname = 'tag_' + fname[:-4] + '.txt'
     outname = fname[:-4] + '.txt'
     output_file = open(os.path.join(args.out, outname), 'wt')
-    p2 = Popen(['python', 'tfidf.py', '-d', os.path.join(args.txt, txtname)], stdout=output_file)
+    p2 = Popen(['python', 'tfidf.py', '-n', '10', '--vanilla',
+        os.path.join(args.txt, txtname)], stdout=output_file)
     return (p2, fname, output_file)
 
 

@@ -13,7 +13,7 @@ if __name__ == '__main__':
     if sys.version_info.major < 3:
         sys.stdout = utf_writer(sys.stdout)
 
-DATA_DIR = '../../data/txt3_raw_seg'
+DATA_DIR = '../../data/txt3_custom_seg'
 
 SEG_DIR = os.path.join(DATA_DIR, 'segmented')
 files = os.listdir(SEG_DIR)
