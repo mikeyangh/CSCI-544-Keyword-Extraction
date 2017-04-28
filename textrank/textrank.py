@@ -3,6 +3,7 @@ import argparse
 ITERATION_TIME = 200
 WINDOW_SIZE = 2
 KEY_PHRASE_NUM = 10
+FILTER = 0.33
 d = 0.85
 
 
@@ -34,6 +35,8 @@ def parse_commands():
                         help='Store iteration time for textrank. Default value: 200')
     parser.add_argument('-w', '--window', action='store', dest='window', default=2, type=int,
                         help='Store cooccurrence window size for textrank. Default value: 2')
+    parser.add_argument('-f', '--filter', action='store', dest='filter', default=0.33, type=float,
+                        help='Store the ratio of unfiltered single key word. Default value: 0.33')
     parser.add_argument('-k', '--keynum', action='store', dest='key_num', default=10, type=int,
                         help='Store the number of generated keywords. Default value: 10')
     parser.add_argument('-o', '--output', action='store', dest='output_file', default='./result.txt', type=str,
@@ -53,6 +56,7 @@ def parse_commands():
     WINDOW_SIZE = results.window
     words_file = results.words_file
     tags_file = results.tags_file
+    FILTER = results.filter
     KEY_PHRASE_NUM = results.key_num
     output_file = results.output_file
 
@@ -234,7 +238,7 @@ def combine_keyword():
     tmp_list = [(phrase, _score) for phrase, _score in keyphrase_score_dict.items()]
     tmp_list.sort(key=lambda x: -x[1])
     global keyphrase_list
-    keyphrase_list = tmp_list[:min(len(keyphrase), KEY_PHRASE_NUM)]
+    keyphrase_list = tmp_list[:min(len(tmp_list), KEY_PHRASE_NUM)]
 
 
 def main():
@@ -248,7 +252,8 @@ def main():
     generate_graph()
 
     iterate_update()
-    get_topk_word(len(score_dict)/2)
+    remain_num = int(round(len(score_dict)*FILTER))
+    get_topk_word(remain_num)
     combine_keyword()
 
     # for (word, score) in keyword_list:
