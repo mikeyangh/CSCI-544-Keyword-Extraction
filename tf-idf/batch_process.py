@@ -1,4 +1,6 @@
+from __future__ import print_function
 import argparse
+from io import open
 import os
 import os.path
 from subprocess import Popen, PIPE
@@ -25,8 +27,8 @@ def process_one(fname):
     txtname = fname[:-4] + '.txt'
     tagname = 'tag_' + fname[:-4] + '.txt'
     outname = fname[:-4] + '.txt'
-    output_file = open(os.path.join(args.out, outname), 'w')
-    p2 = Popen(['python', 'tfidf.py', os.path.join(args.txt, txtname)], stdout=output_file)
+    output_file = open(os.path.join(args.out, outname), 'wt')
+    p2 = Popen(['python', 'tfidf.py', '-d', os.path.join(args.txt, txtname)], stdout=output_file)
     return (p2, fname, output_file)
 
 
@@ -34,6 +36,8 @@ def process_all(nproc=1, nfiles=N):
     process_count = 0
     complete_count = 0
 
+    if not os.path.exists(args.out):
+        os.makedirs(args.out)
     running = []
     while True:
         if len(running) < nproc and process_count < nfiles:

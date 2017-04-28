@@ -1,8 +1,17 @@
+from __future__ import print_function
+import codecs
+from io import open
 import math
 import operator
 import os
 import os.path
 import pickle
+import sys
+
+if __name__ == '__main__':
+    utf_writer = codecs.getwriter('utf8')
+    if sys.version_info.major < 3:
+        sys.stdout = utf_writer(sys.stdout)
 
 DATA_DIR = '../../data/txt3_raw_seg'
 
@@ -12,6 +21,7 @@ files = os.listdir(SEG_DIR)
 TMP_PATH = '/tmp/idf.txt'
 
 def filt(word):
+    #return len(word.strip()) != 0
     for i in range(len(word)):
         if ord(word[i]) > 0x80:
             return True
@@ -43,7 +53,7 @@ class IDF:
                 data.append((word, self.idf[word]))
             data.sort(key=operator.itemgetter(1))
             for word, idf, in data:
-                f.write('{} {}\n'.format(word, idf))
+                f.write(u'{} {}\n'.format(word, idf))
 
     def load(self):
         with open(TMP_PATH) as f:
